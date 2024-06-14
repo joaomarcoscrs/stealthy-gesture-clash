@@ -12,48 +12,69 @@ function renderResult(count) {
 
     var ctx = canvas.getContext("2d");
 
+    // Calculate total for percentages
+    var total = count.win + count.draw + count.lose;
+    var winPercent = (count.win / total) * 100;
+    var drawPercent = (count.draw / total) * 100;
+    var losePercent = (count.lose / total) * 100;
+
     // Check if chart already exists
     if (resultDiv.chart) {
       // If chart exists, update the data
-      resultDiv.chart.data.datasets[0].data = [count.win, count.draw, count.lose];
+      resultDiv.chart.data.datasets[0].data = [winPercent, drawPercent, losePercent];
       resultDiv.chart.update();
     } else {
       // If chart does not exist, create a new one
       var data = {
-        labels: ["Win", "Draw", "Lose"],
-        datasets: [{
-          label: "Result Counts",
-          data: [count.win, count.draw, count.lose],
-          backgroundColor: [
-            "rgba(75, 192, 192, 0.2)", // Green for win
-            "rgba(255, 255, 255, 0.2)", // White for draw
-            "rgba(255, 99, 132, 0.2)" // Red for lose
-          ],
-          borderColor: [
-            "rgba(75, 192, 192, 1)",
-            "rgba(255, 255, 255, 1)",
-            "rgba(255, 99, 132, 1)"
-          ],
-          borderWidth: 1
-        }]
+        labels: ["Results"],
+        datasets: [
+          {
+            label: "Win",
+            data: [winPercent],
+            backgroundColor: "rgba(75, 192, 192, 0.2)", // Green for win
+            borderColor: "rgba(75, 192, 192, 1)",
+            borderWidth: 1
+          },
+          {
+            label: "Draw",
+            data: [drawPercent],
+            backgroundColor: "rgba(255, 255, 255, 0.2)", // White for draw
+            borderColor: "rgba(255, 255, 255, 1)",
+            borderWidth: 1
+          },
+          {
+            label: "Lose",
+            data: [losePercent],
+            backgroundColor: "rgba(255, 99, 132, 0.2)", // Red for lose
+            borderColor: "rgba(255, 99, 132, 1)",
+            borderWidth: 1
+          }
+        ]
       };
 
       var options = {
+        indexAxis: 'y', // Makes the bar chart horizontal
         scales: {
+          x: {
+            beginAtZero: true,
+            stacked: true,
+            max: 100
+          },
           y: {
-            beginAtZero: true
+            stacked: true
           }
         }
       };
 
       resultDiv.chart = new Chart(ctx, {
-        type: "line",
+        type: "bar",
         data: data,
         options: options
       });
     }
   }
 }
+
 
 
 
