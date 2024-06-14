@@ -1,0 +1,72 @@
+export function notSoRandomNouns() {
+  const nouns = [
+    "people",
+    "friends",
+    "buddies",
+    "pals",
+    "fellows",
+    "chums",
+    "mates",
+    "companions",
+    "associates",
+    "partners",
+    "allies",
+    "confidants",
+    "acquaintances",
+    "colleagues",
+    "neighbors",
+    "roommates",
+    "classmates",
+    "teammates",
+    "cohorts",
+    "collaborators",
+    "conspirators",
+    "co-workers",
+    "co-pilots",
+    "sheriffs",
+    "shenanigators",
+  ];
+
+  return nouns[Math.floor(Math.random() * nouns.length)];
+}
+
+export function notSoRandomAdjective() {
+  const adjectives = [
+    "amazing",
+    "awesome",
+    "beautiful",
+    "brilliant",
+    "cool",
+    "crazy",
+    "delightful",
+    "epic",
+    "excellent",
+    "extraordinary",
+    "fabulous",
+    "fantastic",
+    "fun",
+    "great",
+    "incredible",
+    "insane",
+    "interesting",
+    "lovely",
+    "magnificent",
+    "marvelous",
+    "outstanding",
+    "perfect",
+    "phenomenal",
+    "rad",
+    "remarkable",
+    "spectacular",
+    "splendid",
+    "stellar",
+    "stunning",
+    "super",
+    "terrific",
+    "unbelievable",
+    "wonderful",
+    "wondrous",
+  ];
+
+  return adjectives[Math.floor(Math.random() * adjectives.length)];
+}
