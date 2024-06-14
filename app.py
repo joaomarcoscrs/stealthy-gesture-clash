@@ -6,16 +6,15 @@ import logging
 import time
 
 from inference.core.interfaces.camera.entities import VideoFrame
-from flask import Flask, render_template, Response
-from flask_sock import Sock
+from flask import Flask, render_template
 from chord_inference import infer
-from typing import Optional
-from flask_socketio import SocketIO, emit
+from flask_socketio import SocketIO
 
 app = Flask(__name__)
 socket = SocketIO(app)
 
-annotator = supervision.BoxAnnotator()
+label_annotator = supervision.LabelAnnotator()
+box_annotator = supervision.BoundingBoxAnnotator()
 
 
 @app.route("/")
@@ -30,7 +29,7 @@ def index():
 
 async def async_inference():
     await asyncio.to_thread(
-        infer, "rock-paper-scissors-sxsw/11", 0, on_prediction=publish_annotated_frame
+        infer, "guitar-chords-daewp/3", 0, on_prediction=publish_annotated_frame
     )
 
 
@@ -44,18 +43,23 @@ def publish_buffered_frame_to_socket(frame):
     _, buffer = cv2.imencode(".jpg", frame)
     frame = buffer.tobytes()
 
-    logging.error("SOCKET: Sending frame to socket")
-    logging.error(f"SOCKET: Frame size: {len(frame)}")
-
     socket.emit("update-frame", frame)
 
 
 def annotated_frame(predictions: dict, video_frame: VideoFrame):
+    socket.emit("debug", predictions)
     labels = [p["class"] for p in predictions["predictions"]]
     detections = supervision.Detections.from_inference(predictions)
-    return annotator.annotate(
-        scene=video_frame.image.copy(), detections=detections, labels=labels
+
+    annotated = box_annotator.annotate(
+        scene=video_frame.image.copy(), detections=detections
     )
+
+    annotated = label_annotator.annotate(
+        scene=annotated, labels=labels, detections=detections
+    )
+
+    return annotated
 
 
 def publish_annotated_frame(predictions: dict, video_frame: VideoFrame):

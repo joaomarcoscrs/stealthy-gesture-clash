@@ -13,6 +13,8 @@ PIPELINE: Optional[InferencePipeline] = None
 
 ROBOFLOW_API_KEY: str = os.getenv("ROBOFLOW_API_KEY")
 
+FPS: int = 6
+
 current_frame_with_predictions: Optional[bytes] = None
 
 frame_lock = threading.Lock()
@@ -29,7 +31,7 @@ def infer(
         video_reference=source,
         on_prediction=on_prediction,
         api_key=ROBOFLOW_API_KEY,
-        max_fps=30,
+        max_fps=FPS,
     )
     PIPELINE.start()
 

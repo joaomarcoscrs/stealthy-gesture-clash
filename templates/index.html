@@ -46,6 +46,10 @@
           console.log("SocketIO connection opened");
         });
 
+        socket.on("debug", function (data) {
+          console.log("Received debug message from server");
+        });
+
         socket.on("update-frame", function (data) {
           console.log("Received frame from SocketIO");
           var blob = new Blob([data], { type: "image/jpeg" });
