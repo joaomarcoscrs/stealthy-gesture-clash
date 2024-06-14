@@ -1,11 +1,65 @@
-<body>
-  <div class="container">
-    <div class="row">
-      <div class="col-lg-8 offset-lg-2">
-        <h3 class="mt-5">Live Streaming</h3>
-        <img src="{{ url_for('inference_pipeline') }}" width="0" />
-        <img src="{{ url_for('camera') }}" width="100%" />
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chord Inference</title>
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+    <style>
+      body {
+        background-color: #1c1c1c;
+        color: white;
+      }
+
+      #video-container {
+        margin-top: 50px;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+      }
+
+      #video {
+        width: 100%;
+        border-radius: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1 class="text-center">Chord Inference</h1>
+      <div id="video-container" class="text-center">
+        <img id="video" />
       </div>
     </div>
-  </div>
-</body>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        console.log("Opening SocketIO connection");
+        var socket = io.connect("http://127.0.0.1:5000");
+        var video = document.getElementById("video");
+
+        socket.on("connect", function () {
+          console.log("SocketIO connection opened");
+        });
+
+        socket.on("update-frame", function (data) {
+          console.log("Received frame from SocketIO");
+          var blob = new Blob([data], { type: "image/jpeg" });
+          var url = URL.createObjectURL(blob);
+          video.src = url;
+          video.onload = function () {
+            URL.revokeObjectURL(url);
+          };
+        });
+
+        socket.on("disconnect", function () {
+          console.log("SocketIO connection closed");
+        });
+      });
+    </script>
+  </body>
+</html>

@@ -1,81 +1,68 @@
-import threading
 import cv2
 import supervision
+import asyncio
+import threading
+import logging
+import time
 
 from inference.core.interfaces.camera.entities import VideoFrame
 from flask import Flask, render_template, Response
+from flask_sock import Sock
 from chord_inference import infer
 from typing import Optional
+from flask_socketio import SocketIO, emit
 
 app = Flask(__name__)
-
-frame_to_render: Optional[bytes] = None
+socket = SocketIO(app)
 
 annotator = supervision.BoxAnnotator()
 
 
 @app.route("/")
 def index():
+    logging.info("Index route called, starting inference")
+    # Start the inference in a background thread
+    inference_thread = threading.Thread(target=start_inference)
+    inference_thread.daemon = True
+    inference_thread.start()
     return render_template("index.html")
 
 
-@app.route("/inference_pipeline")
-def inference_pipeline():
-    inference_thread = threading.Thread(target=start_inference)
-    inference_thread.daemon = (
-        True  # Daemonize the thread so it's killed when the main thread exits
-    )
-    inference_thread.start()
-    return "Inference started"
-
-
-@app.route("/camera")
-def camera():
-    return Response(
-        display_annotated_frame(), mimetype="multipart/x-mixed-replace; boundary=frame"
+async def async_inference():
+    await asyncio.to_thread(
+        infer, "rock-paper-scissors-sxsw/11", 0, on_prediction=publish_annotated_frame
     )
 
 
 def start_inference():
-    infer("rock-paper-scissors-sxsw/11", 0, on_prediction=save_annotated_frame)
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    loop.run_until_complete(async_inference())
 
 
-def save_annotated_frame(predictions: dict, video_frame: VideoFrame):
-    global frame_to_render
+def publish_buffered_frame_to_socket(frame):
+    _, buffer = cv2.imencode(".jpg", frame)
+    frame = buffer.tobytes()
 
+    logging.error("SOCKET: Sending frame to socket")
+    logging.error(f"SOCKET: Frame size: {len(frame)}")
+
+    socket.emit("update-frame", frame)
+
+
+def annotated_frame(predictions: dict, video_frame: VideoFrame):
     labels = [p["class"] for p in predictions["predictions"]]
     detections = supervision.Detections.from_inference(predictions)
-    image = annotator.annotate(
+    return annotator.annotate(
         scene=video_frame.image.copy(), detections=detections, labels=labels
     )
 
-    frame_to_render = image
 
-    # display the annotated image
-    # cv2.imshow("Predictions", image)
-    # cv2.waitKey(1)
+def publish_annotated_frame(predictions: dict, video_frame: VideoFrame):
+    frame_to_render = annotated_frame(predictions, video_frame)
 
-
-def display_annotated_frame():
-    global frame_to_render
-
-    while True:
-        if frame_to_render is not None:
-            ret, buffer = cv2.imencode(".jpg", frame_to_render)
-            frame = buffer.tobytes()
-            yield (b"--frame\r\n" b"Content-Type: image/jpeg\r\n\r\n" + frame + b"\r\n")
-
-
-# def gen_frames():
-#     while True:
-#         success, frame = video_source.read()
-#         if not success:
-#             break
-#         else:
-#             ret, buffer = cv2.imencode(".jpg", frame)
-#             frame = buffer.tobytes()
-#             yield (b"--frame\r\n" b"Content-Type: image/jpeg\r\n\r\n" + frame + b"\r\n")
+    publish_buffered_frame_to_socket(frame_to_render)
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    socket.run(app, debug=True)
