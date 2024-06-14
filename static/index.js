@@ -1,7 +1,49 @@
 document.addEventListener("DOMContentLoaded", function () {
   startSocket();
   handleInputs();
+  handlePlaceholders();
 });
+
+function notSoRandomAdjective() {
+  const adjectives = [
+    "amazing",
+    "awesome",
+    "beautiful",
+    "brilliant",
+    "cool",
+    "crazy",
+    "delightful",
+    "epic",
+    "excellent",
+    "extraordinary",
+    "fabulous",
+    "fantastic",
+    "fun",
+    "great",
+    "incredible",
+    "insane",
+    "interesting",
+    "lovely",
+    "magnificent",
+    "marvelous",
+    "outstanding",
+    "perfect",
+    "phenomenal",
+    "rad",
+    "remarkable",
+    "spectacular",
+    "splendid",
+    "stellar",
+    "stunning",
+    "super",
+    "terrific",
+    "unbelievable",
+    "wonderful",
+    "wondrous",
+  ];
+
+  return adjectives[Math.floor(Math.random() * adjectives.length)];
+}
 
 function handleInputs() {
   const nameInput = document.getElementById("name");
@@ -17,6 +59,12 @@ function handleInputs() {
   // Event listeners for input changes
   nameInput.addEventListener("input", checkInputs);
   roomKeyInput.addEventListener("input", checkInputs);
+
+  const adjective = notSoRandomAdjective();
+
+  // Creates good placeholders
+  nameInput.placeholder = `${adjective} raccoon`;
+  roomKeyInput.placeholder = `${adjective}-raccoon-and-friend`;
 
   // Form submission handler
   gameForm.addEventListener("submit", function (event) {
