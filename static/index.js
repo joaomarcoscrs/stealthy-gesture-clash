@@ -72,7 +72,7 @@ function handleInputs(socket, result) {
   // Button click handler for "Create a Room"
   createRoomButton?.addEventListener("click", function () {
     // Perform any action for creating a room here
-    createRoom(socket, nameInput.value, roomKeyInput.value);
+    createRoom(socket, roomKeyInput.value, nameInput.value);
   });
 
   // Button click handler for "play button"

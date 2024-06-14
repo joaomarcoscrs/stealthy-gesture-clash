@@ -5,15 +5,15 @@ content %}
 <div class="flex items-center justify-center flex-col">
   <div class="flex justify-content-center mt-10">
     <div class="flex items-center justify-center flex-col">
-      <div class="font-thin mb-4">
-        hello, <span class="font-bold text-xl">{{ player_name }} 👋🏻 </span>
+      <div class="font-thin">
+        hello,
+        <span class="font-bold text-xl">{{ player_name }} 👋🏻</span> welcome to
+        the room <span class="font-semibold">{{ room_key }}</span>
       </div>
-      <div class="font-thin -mb-4">welcome to the room</div>
-      <div class="room-key font-bold">{{ room_key }}</div>
     </div>
   </div>
 
-  <div id="video-container" class="text-center my-6">
+  <div id="video-container" class="text-center my-3">
     <img id="video" />
   </div>
 
@@ -22,7 +22,7 @@ content %}
     id="playButton"
     title="play!"
   >
-    play
+    play_
   </button>
   <div id="result" class="mt-4">
     <!-- Content will be dynamically updated here -->

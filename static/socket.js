@@ -14,14 +14,16 @@ function renderResult(count) {
 
     // Calculate total for percentages
     var total = count.win + count.draw + count.lose;
-    var winPercent = (count.win / total) * 100;
-    var drawPercent = (count.draw / total) * 100;
-    var losePercent = (count.lose / total) * 100;
+    var winPercent = total > 0 ? (count.win / total) * 100 : 0;
+    var drawPercent = total > 0 ? (count.draw / total) * 100 : 0;
+    var losePercent = total > 0 ? (count.lose / total) * 100 : 0;
 
     // Check if chart already exists
     if (resultDiv.chart) {
       // If chart exists, update the data
-      resultDiv.chart.data.datasets[0].data = [winPercent, drawPercent, losePercent];
+      resultDiv.chart.data.datasets[0].data = [winPercent];
+      resultDiv.chart.data.datasets[1].data = [drawPercent];
+      resultDiv.chart.data.datasets[2].data = [losePercent];
       resultDiv.chart.update();
     } else {
       // If chart does not exist, create a new one
@@ -74,6 +76,7 @@ function renderResult(count) {
     }
   }
 }
+
 
 
 

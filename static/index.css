@@ -21,8 +21,8 @@ body, html {
 
 #video-container {
   width: auto;
-  height: 50%; /* One-third of the screen height */
-  max-width: 50%; /* Limit width to one-third of the screen width */
+  height: 40%; /* One-third of the screen height */
+  max-width: 40%; /* Limit width to one-third of the screen width */
   border-radius: 10px;
   overflow: hidden;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
