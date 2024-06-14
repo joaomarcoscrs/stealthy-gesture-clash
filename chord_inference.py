@@ -29,6 +29,7 @@ def infer(
         video_reference=source,
         on_prediction=on_prediction,
         api_key=ROBOFLOW_API_KEY,
+        max_fps=30,
     )
     PIPELINE.start()
 

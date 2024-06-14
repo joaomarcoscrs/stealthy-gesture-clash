@@ -21,11 +21,11 @@ def index():
 
 @app.route("/inference_pipeline")
 def inference_pipeline():
-    infer(
-        "rock-paper-scissors-sxsw/11",
-        0,
-        on_prediction=save_annotated_frame,
+    inference_thread = threading.Thread(target=start_inference)
+    inference_thread.daemon = (
+        True  # Daemonize the thread so it's killed when the main thread exits
     )
+    inference_thread.start()
     return "Inference started"
 
 
@@ -34,6 +34,10 @@ def camera():
     return Response(
         display_annotated_frame(), mimetype="multipart/x-mixed-replace; boundary=frame"
     )
+
+
+def start_inference():
+    infer("rock-paper-scissors-sxsw/11", 0, on_prediction=save_annotated_frame)
 
 
 def save_annotated_frame(predictions: dict, video_frame: VideoFrame):
