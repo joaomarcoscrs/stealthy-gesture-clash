@@ -15,10 +15,6 @@ ROBOFLOW_API_KEY: str = os.getenv("ROBOFLOW_API_KEY")
 
 FPS: int = 6
 
-current_frame_with_predictions: Optional[bytes] = None
-
-frame_lock = threading.Lock()
-
 
 def infer(
     model_id: str,

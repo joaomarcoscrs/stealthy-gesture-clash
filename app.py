@@ -7,7 +7,7 @@ import time
 
 from inference.core.interfaces.camera.entities import VideoFrame
 from flask import Flask, render_template
-from chord_inference import infer
+from computer_vision import infer
 from flask_socketio import SocketIO
 
 app = Flask(__name__)
@@ -29,7 +29,7 @@ def index():
 
 async def async_inference():
     await asyncio.to_thread(
-        infer, "guitar-chords-daewp/3", 0, on_prediction=publish_annotated_frame
+        infer, "rock-paper-scissors-sxsw/14", 0, on_prediction=publish_annotated_frame
     )
 
 
