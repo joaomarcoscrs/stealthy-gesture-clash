@@ -1,6 +1,8 @@
 import time
 import random
 
+from db import db
+
 GAME_ACTION_WINNERS_MAP = {
     "rock": "paper",
     "paper": "scissors",
@@ -12,32 +14,18 @@ def bot_action():
     return random.choice(["rock", "paper", "scissors"])
 
 
-def is_playing(games, room_key):
-    return games[room_key].get("playing", False)
-
-
-def run_game(games, socket, room_key):
-    if not room_key in games:
-        raise Exception("Game does not exist")
-
-    if is_playing(games, room_key):
-        return
-
+def run_game(socket, room_key):
     # starts to play then after 10s ends the game
-    games[room_key]["playing"] = True
     socket.emit(
         "game-started",
         {"room_key": room_key},
-        broadcast=True,
     )
 
     time.sleep(10)
 
-    games[room_key]["playing"] = False
     socket.emit(
         "game-ended",
         {"room_key": room_key},
-        broadcast=True,
     )
 
 
@@ -56,17 +44,11 @@ def decide_result(player_action, bot_action):
         return "win"
 
 
-def process_result(games, room_key, socket, player_action):
-    if not room_key in games:
-        raise Exception("Game does not exist")
-
-    if not is_playing(games, room_key):
-        return
-
+def process_result(room_key, socket, player_action):
     oponent_action = bot_action()
     result = decide_result(player_action, oponent_action)
 
-    if result:
+    if player_action and result:
         socket.emit(
             "result",
             {
@@ -75,23 +57,15 @@ def process_result(games, room_key, socket, player_action):
                 "player_action": player_action,
                 "bot_action": oponent_action,
             },
-            broadcast=True,
         )
 
 
-def account_player_action(games, socket, room_key, player_name, predictions):
-    if not room_key in games:
-        raise Exception("Game does not exist")
-
-    if not is_playing(games, room_key):
-        return
-
+def account_player_action(socket, room_key, player_name, predictions):
     action = get_action_from_predictions(predictions)
 
     socket.emit(
         "player-action",
         {"room_key": room_key, "player_name": player_name, "action": action},
-        broadcast=True,
     )
 
-    process_result(games, room_key, socket, action)
+    process_result(room_key, socket, action)

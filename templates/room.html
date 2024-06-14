@@ -1,27 +1,31 @@
 {% extends "base.html" %} {% block title %}{{ room_key }}{% endblock %} {% block
 content %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 <div class="flex items-center justify-center flex-col">
   <div class="flex justify-content-center mt-10">
     <div class="flex items-center justify-center flex-col">
       <div class="font-thin mb-4">
         hello, <span class="font-bold text-xl">{{ player_name }} 👋🏻 </span>
       </div>
-      <div>
-        <div class="font-thin -mb-4">room key:</div>
-        <div class="room-key">{{ room_key }}</div>
-      </div>
-    </div>
-    <div id="video-container" class="text-center ml-6 mt-2">
-      <img id="video" />
+      <div class="font-thin -mb-4">welcome to the room</div>
+      <div class="room-key font-bold">{{ room_key }}</div>
     </div>
   </div>
 
+  <div id="video-container" class="text-center my-6">
+    <img id="video" />
+  </div>
+
   <button
-    class="text-blue-500 hover:text-blue-700 text-4xl font-bold mt-6 bg-transparent"
+    class="text-blue-500 hover:text-blue-700 text-4xl font-bold bg-transparent"
     id="playButton"
-    title="waiting for your opponent to join"
+    title="play!"
   >
     play
   </button>
+  <div id="result" class="mt-4">
+    <!-- Content will be dynamically updated here -->
+  </div>
 </div>
 {% endblock %}

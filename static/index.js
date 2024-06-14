@@ -2,8 +2,10 @@ import { notSoRandomAdjective, notSoRandomNouns } from "./not-so-random.js";
 import { startSocket } from "./socket.js";
 
 document.addEventListener("DOMContentLoaded", function () {
-  const socket = startSocket();
-  handleInputs(socket);
+  var result = [];
+
+  const socket = startSocket(result);
+  handleInputs(socket, result);
 });
 
 
@@ -18,18 +20,23 @@ function createRoom(socket, roomKey, name) {
   });
 };
 
+function getRoomKeyFromPath() {
+  return window.location.pathname.split("/").pop();
+}
+
 function joinRoom(socket, name, roomKey) {
   window.location.href = `/room/${roomKey}?name=${name}`;
   console.log(socket, name, roomKey)
   socket?.emit("joined-room", { name, roomKey });
 }
 
-function handleInputs(socket) {
+function handleInputs(socket, result) {
   const nameInput = document.getElementById("name");
   const roomKeyInput = document.getElementById("roomKey");
   const joinRoomButton = document.getElementById("joinRoomButton");
   const createRoomButton = document.getElementById("createRoomButton");
   const gameForm = document.getElementById("gameForm");
+  const playButton = document.getElementById("playButton");
 
   // Enable the play button if both inputs are filled
   const checkInputs = () => {
@@ -66,5 +73,26 @@ function handleInputs(socket) {
   createRoomButton?.addEventListener("click", function () {
     // Perform any action for creating a room here
     createRoom(socket, nameInput.value, roomKeyInput.value);
+  });
+
+  // Button click handler for "play button"
+  playButton?.addEventListener("click", function () {
+    // resets result
+    result.length = 0;
+
+    var resultDiv = document.getElementById("result");
+    if (resultDiv) {
+      // Clear existing content
+      resultDiv.innerHTML = "";
+    }
+
+    // plays the game
+    fetch("/play", {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        room_key: getRoomKeyFromPath(),
+      })
+    });
   });
 }

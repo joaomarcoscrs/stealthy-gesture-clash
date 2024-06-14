@@ -10,7 +10,8 @@ from inference.core.interfaces.camera.entities import VideoFrame
 from flask import Flask, render_template, request
 from computer_vision import infer
 from flask_socketio import SocketIO
-from game import run_game, is_playing, account_player_action
+from game import run_game, account_player_action
+from db import db
 
 app = Flask(__name__)
 socket = SocketIO(app)
@@ -18,21 +19,17 @@ socket = SocketIO(app)
 label_annotator = supervision.LabelAnnotator()
 box_annotator = supervision.BoundingBoxAnnotator()
 
-games = {}
-
-games_lock = threading.Lock()
+db().save("is_playing", False)
 
 
 @app.route("/play", methods=["POST"])
 def play():
+
     room_key = request.form.get("room_key")
 
-    socket.emit("game-started", room_key, broadcast=True)
-
-    with games_lock:
-        run_game(room_key)
-
-    socket.emit("game-ended", room_key, broadcast=True)
+    db().save("is_playing", True)
+    run_game(socket, room_key)
+    db().save("is_playing", False)
 
     return "Ok"
 
@@ -88,7 +85,6 @@ def publish_buffered_frame_to_socket(room_key, player_name, frame):
 
 
 def annotated_frame(predictions: dict, video_frame: VideoFrame):
-    socket.emit("debug", predictions)
     labels = [p["class"] for p in predictions["predictions"]]
     detections = supervision.Detections.from_inference(predictions)
 
@@ -109,14 +105,13 @@ def process_predictions(
     room_key: str = None,
     player_name: str = None,
 ):
-    with games_lock:
-        if is_playing(games, room_key):
-            frame_to_render = annotated_frame(predictions, video_frame)
-        else:
-            frame_to_render = video_frame.image
+    if db().get("is_playing"):
+        frame_to_render = annotated_frame(predictions, video_frame)
+        account_player_action(socket, room_key, player_name, predictions)
+    else:
+        frame_to_render = video_frame.image
 
-        account_player_action(games, socket, room_key, player_name, predictions)
-        publish_buffered_frame_to_socket(room_key, player_name, frame_to_render)
+    publish_buffered_frame_to_socket(room_key, player_name, frame_to_render)
 
 
 if __name__ == "__main__":

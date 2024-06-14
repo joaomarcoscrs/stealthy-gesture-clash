@@ -2,6 +2,13 @@
   font-family: 'Roboto Mono', sans-serif;
 }
 
+nav {
+  background: linear-gradient(45deg, #0e0e0e, #0e0e22); /* Dark gradient from black to very dark purple */
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1000; /* Ensure the navbar stays on top of other elements */
+}
 
 body, html {
   background: linear-gradient(45deg, #0e0e0e, #0e0e22); /* Dark gradient from black to very dark purple */
@@ -14,8 +21,8 @@ body, html {
 
 #video-container {
   width: auto;
-  height: 33.33%; /* One-third of the screen height */
-  max-width: 33.33%; /* Limit width to one-third of the screen width */
+  height: 50%; /* One-third of the screen height */
+  max-width: 50%; /* Limit width to one-third of the screen width */
   border-radius: 10px;
   overflow: hidden;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
