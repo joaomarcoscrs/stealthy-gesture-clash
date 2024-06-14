@@ -1,0 +1,12 @@
+{% extends "base.html" %} {% block title %}Room Page{% endblock %} {% block
+content %}
+<div class="container">
+  <div id="video-container" class="text-center">
+    <img id="video" />
+  </div>
+</div>
+<div class="flex align-baseline justify-center">
+  <div class="font-thin">room key:</div>
+  <div class="room-key">{{ room_key }}</div>
+</div>
+{% endblock %}

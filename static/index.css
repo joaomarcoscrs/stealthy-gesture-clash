@@ -30,6 +30,11 @@ body, html {
   border-radius: 10px;
 }
 
+.room-key {
+  font-size: 3rem; /* Large font size */
+  font-weight: 100; /* Thin font weight */
+}
+
 .container {
   padding-top: 50px;
 }

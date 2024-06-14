@@ -27,6 +27,11 @@ def index():
     return render_template("index.html")
 
 
+@app.route("/room/<room_key>")
+def room(room_key):
+    return render_template("room.html", room_key=room_key)
+
+
 async def async_inference():
     await asyncio.to_thread(
         infer, "rock-paper-scissors-sxsw/14", 0, on_prediction=publish_annotated_frame
