@@ -6,64 +6,35 @@
     <title>stealthy gesture clash</title>
     <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
     <link
+      href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@100;200;300;400;500;600;700;800&display=swap"
       rel="stylesheet"
-      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
     />
-    <style>
-      body {
-        background-color: #1c1c1c;
-        color: white;
-      }
 
-      #video-container {
-        margin-top: 50px;
-        border-radius: 10px;
-        overflow: hidden;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-      }
-
-      #video {
-        width: 100%;
-        border-radius: 10px;
-      }
-    </style>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../static/index.css" />
+    <!-- Font Awesome CSS -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+      rel="stylesheet"
+    />
   </head>
   <body>
-    <div class="container">
-      <h1 class="text-center">stealthy gesture clash</h1>
-      <div id="video-container" class="text-center">
-        <img id="video" />
-      </div>
+    <nav class="bg-transparent text-white border-b-2 border-gray-900 px-4 py-3">
+      <h1 class="font-thin text-3xl">
+        <i class="fas fa-user-ninja mr-3"></i>stealthy gesture clash
+      </h1>
+    </nav>
+    <div id="video-container">
+      <img id="video" />
     </div>
 
-    <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        console.log("Opening SocketIO connection");
-        var socket = io.connect("http://127.0.0.1:5000");
-        var video = document.getElementById("video");
-
-        socket.on("connect", function () {
-          console.log("SocketIO connection opened");
-        });
-
-        socket.on("debug", function (data) {
-          console.log("Received debug message from server");
-        });
-
-        socket.on("update-frame", function (data) {
-          console.log("Received frame from SocketIO");
-          var blob = new Blob([data], { type: "image/jpeg" });
-          var url = URL.createObjectURL(blob);
-          video.src = url;
-          video.onload = function () {
-            URL.revokeObjectURL(url);
-          };
-        });
-
-        socket.on("disconnect", function () {
-          console.log("SocketIO connection closed");
-        });
-      });
-    </script>
+    <script src="../static/index.js"></script>
   </body>
 </html>

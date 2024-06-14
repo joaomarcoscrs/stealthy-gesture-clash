@@ -21,9 +21,9 @@ box_annotator = supervision.BoundingBoxAnnotator()
 def index():
     logging.info("Index route called, starting inference")
     # Start the inference in a background thread
-    inference_thread = threading.Thread(target=start_inference)
-    inference_thread.daemon = True
-    inference_thread.start()
+    # inference_thread = threading.Thread(target=start_inference)
+    # inference_thread.daemon = True
+    # inference_thread.start()
     return render_template("index.html")
 
 
@@ -69,4 +69,4 @@ def publish_annotated_frame(predictions: dict, video_frame: VideoFrame):
 
 
 if __name__ == "__main__":
-    socket.run(app, debug=True)
+    socket.run(app, debug=True, host="0.0.0.0", port=10000)

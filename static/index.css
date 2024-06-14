@@ -1,0 +1,35 @@
+* {
+  font-family: 'Roboto Mono', sans-serif;
+}
+
+
+body, html {
+  background: linear-gradient(45deg, #0e0e0e, #0e0e22); /* Dark gradient from black to very dark purple */
+  color: white;
+  margin: 0;
+  padding: 0;
+  position: relative;
+  height: 100vh;
+}
+
+#video-container {
+  position: absolute;
+  top: 70px; /* Adjusted to accommodate the navbar */
+  right: 20px;
+  width: auto;
+  height: 33.33%; /* One-third of the screen height */
+  max-width: 33.33%; /* Limit width to one-third of the screen width */
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+#video {
+  width: 100%;
+  height: 100%;
+  border-radius: 10px;
+}
+
+.container {
+  padding-top: 50px;
+}
