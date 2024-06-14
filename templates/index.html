@@ -1,6 +1,17 @@
 {% extends "base.html" %} {% block title %}Index Page{% endblock %} {% block
 content %}
-<div class="container mt-5">
+<div class="container mt-2">
+  <h3 class="font-thin text-white my-2">
+    you and your opponent will have <span class="font-semibold">10s time span</span> to make (and change)
+    any gestures of rock, paper, or scissors
+  </h3>
+  <h3 class="font-thin text-white my-2">
+    the winner will be determined by the gestures made by you and your opponent using your webcam
+  </h3>
+  <h3 class="font-thin text-white my-2">
+    whoever wins for <span class="font-semibold">most of the time</span class="font-bold"> will be the winner
+  </h3>
+  <h3 class="font-thin text-white my-6">good luck!</h3>
   <form id="gameForm">
     <div class="form-row">
       <div class="form-group col-md-6">
