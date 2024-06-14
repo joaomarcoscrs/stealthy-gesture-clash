@@ -10,7 +10,7 @@ from inference.core.interfaces.camera.entities import VideoFrame
 from flask import Flask, render_template, request
 from computer_vision import infer
 from flask_socketio import SocketIO
-from game import run_game, add_player_to_game, is_playing, account_player_action
+from game import run_game, is_playing, account_player_action
 
 app = Flask(__name__)
 socket = SocketIO(app)
@@ -20,18 +20,17 @@ box_annotator = supervision.BoundingBoxAnnotator()
 
 games = {}
 
+games_lock = threading.Lock()
+
 
 @app.route("/play", methods=["POST"])
 def play():
-    # Start the inference in a background thread
-    # inference_thread = threading.Thread(target=start_inference)
-    # inference_thread.daemon = True
-    # inference_thread.start()
     room_key = request.form.get("room_key")
 
     socket.emit("game-started", room_key, broadcast=True)
 
-    run_game(room_key)
+    with games_lock:
+        run_game(room_key)
 
     socket.emit("game-ended", room_key, broadcast=True)
 
@@ -57,8 +56,6 @@ def room(room_key):
     )
     inference_thread.daemon = True
     inference_thread.start()
-
-    add_player_to_game(games, room_key, player_name)
 
     return render_template("room.html", room_key=room_key, player_name=player_name)
 
@@ -112,13 +109,14 @@ def process_predictions(
     room_key: str = None,
     player_name: str = None,
 ):
-    if is_playing(games, room_key):
-        frame_to_render = annotated_frame(predictions, video_frame)
-    else:
-        frame_to_render = video_frame.image
+    with games_lock:
+        if is_playing(games, room_key):
+            frame_to_render = annotated_frame(predictions, video_frame)
+        else:
+            frame_to_render = video_frame.image
 
-    account_player_action(games, socket, room_key, player_name, predictions)
-    publish_buffered_frame_to_socket(room_key, player_name, frame_to_render)
+        account_player_action(games, socket, room_key, player_name, predictions)
+        publish_buffered_frame_to_socket(room_key, player_name, frame_to_render)
 
 
 if __name__ == "__main__":

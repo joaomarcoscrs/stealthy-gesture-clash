@@ -13,7 +13,7 @@ PIPELINE: Optional[InferencePipeline] = None
 
 ROBOFLOW_API_KEY: str = os.getenv("ROBOFLOW_API_KEY")
 
-FPS: int = 6
+FPS: int = 5
 
 
 def infer(

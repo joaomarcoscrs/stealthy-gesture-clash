@@ -1,61 +1,97 @@
 import time
+import random
+
+GAME_ACTION_WINNERS_MAP = {
+    "rock": "paper",
+    "paper": "scissors",
+    "scissors": "rock",
+}
+
+
+def bot_action():
+    return random.choice(["rock", "paper", "scissors"])
 
 
 def is_playing(games, room_key):
     return games[room_key].get("playing", False)
 
 
-def run_game(games, room_key):
-    # starts a game, then after 10s, ends the game
-    games[room_key]["playing"] = True
-    time.sleep(10)
-    games[room_key]["playing"] = False
-
-    return room_key
-
-
-def add_player_to_game(games, room_key, player_name):
+def run_game(games, socket, room_key):
     if not room_key in games:
-        games[room_key] = {"players": [player_name]}
+        raise Exception("Game does not exist")
+
+    if is_playing(games, room_key):
         return
 
-    players = games[room_key].get("players", [])
+    # starts to play then after 10s ends the game
+    games[room_key]["playing"] = True
+    socket.emit(
+        "game-started",
+        {"room_key": room_key},
+        broadcast=True,
+    )
 
-    if player_name in players:
-        return
+    time.sleep(10)
 
-    if len(players) == 1:
-        games[room_key]["players"] = players + [player_name]
-
-    # TODO: Publish a message to the room that the game is full, kick someone out of it
-    # and handle it in the frontend
-    raise Exception("Game is full")
+    games[room_key]["playing"] = False
+    socket.emit(
+        "game-ended",
+        {"room_key": room_key},
+        broadcast=True,
+    )
 
 
 def get_action_from_predictions(predictions):
     return "rock"
 
 
-def account_player_action(games, socket, room_key, player_name, predictions):
+def decide_result(player_action, bot_action):
+    if player_action == bot_action:
+        return "draw"
+
+    if GAME_ACTION_WINNERS_MAP[player_action] == bot_action:
+        return "lose"
+
+    if GAME_ACTION_WINNERS_MAP[bot_action] == player_action:
+        return "win"
+
+
+def process_result(games, room_key, socket, player_action):
     if not room_key in games:
         raise Exception("Game does not exist")
-
-    if not player_name in games[room_key].get("players", []):
-        raise Exception("Player is not in the game")
 
     if not is_playing(games, room_key):
         return
 
-    games[room_key]["actions"] = games[room_key].get("actions", {})
+    oponent_action = bot_action()
+    result = decide_result(player_action, oponent_action)
 
-    player_actions = games[room_key]["actions"].get(player_name, [])
+    if result:
+        socket.emit(
+            "result",
+            {
+                "room_key": room_key,
+                "result": result,
+                "player_action": player_action,
+                "bot_action": oponent_action,
+            },
+            broadcast=True,
+        )
+
+
+def account_player_action(games, socket, room_key, player_name, predictions):
+    if not room_key in games:
+        raise Exception("Game does not exist")
+
+    if not is_playing(games, room_key):
+        return
 
     action = get_action_from_predictions(predictions)
-
-    games[room_key]["actions"][player_name] = player_actions + [action]
 
     socket.emit(
         "player-action",
         {"room_key": room_key, "player_name": player_name, "action": action},
         broadcast=True,
     )
+
+    process_result(games, room_key, socket, action)

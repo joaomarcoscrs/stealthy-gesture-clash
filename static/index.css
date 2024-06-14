@@ -31,3 +31,14 @@ body, html {
   font-size: 3rem; /* Large font size */
   font-weight: 100; /* Thin font weight */
 }
+
+button:disabled {
+  color: #9CA3AF; /* Gray color */
+  cursor: not-allowed;
+  border-color: #9CA3AF; /* Gray border color */
+}
+
+button:disabled:hover {
+  color: #9CA3AF; /* Ensure the color doesn't change on hover */
+  border-color: #9CA3AF; /* Ensure the border color doesn't change on hover */
+}

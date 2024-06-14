@@ -1,6 +1,6 @@
 export function startSocket() {
   console.log("Opening SocketIO connection");
-  var socket = io.connect("http://localhost:10000");
+  var socket = io.connect("http://192.168.18.15:10000");
   var videoContainer = document.getElementById("video-container");
   var video = document.getElementById("video");
 
@@ -12,10 +12,13 @@ export function startSocket() {
     console.log("Received debug message from server");
   });
 
+  socket.on("result", function (data) {
+    console.log("Received result from server");
+    console.log(data);
+  });
+
   socket.on("update-frame", function (data) {
     if (videoContainer) videoContainer.style.display = "block";
-
-    console.log('Received frame from server', data.frame)
 
     var blob = new Blob([data.frame], { type: "image/jpeg" });
     var url = URL.createObjectURL(blob);
