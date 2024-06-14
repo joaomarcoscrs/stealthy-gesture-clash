@@ -12,8 +12,8 @@ function createRoom(socket, roomKey) {
 
   window.location.href = `/room/${roomKey}?name=${name}`;
 
-  socket.emit("created-room", { name, roomKey });
-  socket.on("joined-room", (data) => {
+  socket?.emit("created-room", { name, roomKey });
+  socket?.on("joined-room", (data) => {
     if (data.roomKey === roomKey) {
       alert(`${data.name} joined the room!`);
     }
@@ -22,7 +22,8 @@ function createRoom(socket, roomKey) {
 
 function joinRoom(socket, name, roomKey) {
   window.location.href = `/room/${roomKey}?name=${name}`;
-  socket.emit("joined-room", { name, roomKey });
+  console.log(socket, name, roomKey)
+  socket?.emit("joined-room", { name, roomKey });
 }
 
 function handleInputs(socket) {

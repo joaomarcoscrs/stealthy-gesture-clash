@@ -1,6 +1,6 @@
 export function startSocket() {
   console.log("Opening SocketIO connection");
-  var socket = io.connect("http://127.0.0.1:5000");
+  var socket = io.connect("http://localhost:10000");
   var videoContainer = document.getElementById("video-container");
   var video = document.getElementById("video");
 
