@@ -1,12 +1,17 @@
 {% extends "base.html" %} {% block title %}Room Page{% endblock %} {% block
 content %}
-<div class="container">
-  <div id="video-container" class="text-center">
+<div class="flex justify-content-center">
+  <div class="flex items-center justify-center flex-col">
+    <div class="font-thin mb-4">
+      hello, <span class="font-bold text-xl">{{ player_name }} 👋🏻 </span>
+    </div>
+    <div>
+      <div class="font-thin -mb-4">room key:</div>
+      <div class="room-key">{{ room_key }}</div>
+    </div>
+  </div>
+  <div id="video-container" class="text-center ml-6 mt-2">
     <img id="video" />
   </div>
-</div>
-<div class="flex align-baseline justify-center">
-  <div class="font-thin">room key:</div>
-  <div class="room-key">{{ room_key }}</div>
 </div>
 {% endblock %}

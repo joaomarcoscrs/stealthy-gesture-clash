@@ -15,7 +15,9 @@ export function startSocket() {
   socket.on("update-frame", function (data) {
     if (videoContainer) videoContainer.style.display = "block";
 
-    var blob = new Blob([data], { type: "image/jpeg" });
+    console.log('Received frame from server', data.frame)
+
+    var blob = new Blob([data.frame], { type: "image/jpeg" });
     var url = URL.createObjectURL(blob);
     video.src = url;
     video.onload = function () {
