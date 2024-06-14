@@ -28,28 +28,28 @@ function renderResult(count) {
     } else {
       // If chart does not exist, create a new one
       var data = {
-        labels: ["Results"],
+        labels: ["your results"],
         datasets: [
           {
-            label: "Win",
+            label: "won",
             data: [winPercent],
-            backgroundColor: "rgba(75, 192, 192, 0.2)", // Green for win
-            borderColor: "rgba(75, 192, 192, 1)",
-            borderWidth: 1
+            backgroundColor: "rgba(75, 192, 192, 1)",
+            borderWidth: 0,
+            barThickness: 30
           },
           {
-            label: "Draw",
+            label: "draw",
             data: [drawPercent],
-            backgroundColor: "rgba(255, 255, 255, 0.2)", // White for draw
-            borderColor: "rgba(255, 255, 255, 1)",
-            borderWidth: 1
+            backgroundColor: "rgba(255, 255, 255, 1)",
+            borderWidth: 0,
+            barThickness: 30
           },
           {
-            label: "Lose",
+            label: "lost",
             data: [losePercent],
-            backgroundColor: "rgba(255, 99, 132, 0.2)", // Red for lose
-            borderColor: "rgba(255, 99, 132, 1)",
-            borderWidth: 1
+            backgroundColor: "rgba(255, 99, 132, 1)",
+            borderWidth: 0,
+            barThickness: 30
           }
         ]
       };
@@ -60,10 +60,23 @@ function renderResult(count) {
           x: {
             beginAtZero: true,
             stacked: true,
-            max: 100
+            max: 100,
+            ticks: {
+              color: 'white' // Color of x-axis labels
+            }
           },
           y: {
-            stacked: true
+            stacked: true,
+            ticks: {
+              color: 'white' // Color of y-axis labels
+            }
+          }
+        },
+        plugins: {
+          legend: {
+            labels: {
+              color: 'white' // Color of legend labels
+            }
           }
         }
       };
@@ -76,8 +89,6 @@ function renderResult(count) {
     }
   }
 }
-
-
 
 
 
@@ -100,8 +111,7 @@ function appendResult(result) {
 
 
 export function startSocket(result) {
-  console.log("Opening SocketIO connection");
-  var socket = io.connect("http://192.168.18.15:10000");
+  var socket = io.connect("http://192.168.18.15:8080");
   var videoContainer = document.getElementById("video-container");
   var video = document.getElementById("video");
 
@@ -111,19 +121,20 @@ export function startSocket(result) {
 
   socket.on("debug", function (data) {
     console.log("Received debug message from server");
+    console.log(data)
   });
 
   socket.on("result", function (data) {
-    console.log("Received result from server");
     // appends the result to the result
     result.push(data);
     appendResult(result);
   });
 
-  socket.on("update-frame", function (data) {
+  socket.on("frame", function (frame) {
+    console.log('frame received. frame length', frame.length);
     if (videoContainer) videoContainer.style.display = "block";
 
-    var blob = new Blob([data.frame], { type: "image/jpeg" });
+    var blob = new Blob([frame], { type: "image/jpeg" });
     var url = URL.createObjectURL(blob);
     video.src = url;
     video.onload = function () {

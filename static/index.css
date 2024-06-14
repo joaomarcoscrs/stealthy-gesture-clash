@@ -49,3 +49,31 @@ button:disabled:hover {
   color: #9CA3AF; /* Ensure the color doesn't change on hover */
   border-color: #9CA3AF; /* Ensure the border color doesn't change on hover */
 }
+
+/* Initial play button styles */
+#playButton {
+  transition: all 0.3s ease;
+}
+
+/* Style changes when clicked */
+#playButton.playing {
+  background-color: #4caf50; /* Example color change */
+  color: white; /* Change text color */
+  transform: scale(1.1); /* Slightly increase the size */
+}
+
+/* Animation keyframes */
+@keyframes playButtonAnimation {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+}
+
+/* Applying the animation */
+#playButton.playing {
+  animation: playButtonAnimation 0.6s ease infinite;
+}
+

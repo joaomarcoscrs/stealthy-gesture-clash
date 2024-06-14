@@ -77,6 +77,8 @@ function handleInputs(socket, result) {
 
   // Button click handler for "play button"
   playButton?.addEventListener("click", function () {
+    // removes focus from button
+    playButton.blur();
     // resets result
     result.length = 0;
 
@@ -86,6 +88,31 @@ function handleInputs(socket, result) {
       resultDiv.innerHTML = "";
     }
 
+    playButton.classList.add("playing");
+
+    playButton.textContent = "🪨 📃 ✂️"
+
+    // var counterDiv = document.getElementById("counter");
+    // var secondsLeft = 10;
+
+    // if (counterDiv) {
+    //   counterDiv.textContent = secondsLeft.toString();
+    // }
+
+    // var countdown = setInterval(() => {
+    //   secondsLeft--;
+    //   if (counterDiv) {
+    //     counterDiv.textContent = secondsLeft.toString();
+    //   }
+
+    //   if (secondsLeft <= 0) {
+    //     clearInterval(countdown);
+    //     if (counterDiv) {
+    //       counterDiv.textContent = "";
+    //     }
+    //   }
+    // }, 1000);
+
     // plays the game
     fetch("/play", {
       method: 'POST',
@@ -93,6 +120,21 @@ function handleInputs(socket, result) {
       body: JSON.stringify({
         room_key: getRoomKeyFromPath(),
       })
+    }).then((response) => {
+      if (response.ok) {
+        // Remove 'playing' class and reset button text after the game starts
+        playButton.classList.remove("playing");
+        playButton.textContent = "play_";
+      } else {
+        // Handle error (optional)
+        playButton.classList.remove("playing");
+        playButton.textContent = "play_";
+      }
+    }).catch((error) => {
+      // Handle error (optional)
+      playButton.classList.remove("playing");
+      playButton.textContent = "play_";
+      console.error("Error:", error);
     });
   });
 }

@@ -2,7 +2,7 @@ import argparse
 import signal
 import sys
 import os
-import threading
+import logging
 from functools import partial
 from typing import Union, Optional
 
@@ -13,7 +13,7 @@ PIPELINE: Optional[InferencePipeline] = None
 
 ROBOFLOW_API_KEY: str = os.getenv("ROBOFLOW_API_KEY")
 
-FPS: int = 5
+FPS: int = 30
 
 
 def infer(
@@ -21,6 +21,9 @@ def infer(
     source: Union[str, int],
     on_prediction: Optional[callable] = partial(render_boxes, display_statistics=True),
 ):
+    logger = logging.getLogger(__name__)
+
+    logger.error("LOG JM: infer function called")
     global PIPELINE
     PIPELINE = InferencePipeline.init(
         model_id=model_id,

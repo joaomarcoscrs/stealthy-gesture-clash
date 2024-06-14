@@ -3,35 +3,37 @@ import supervision
 import asyncio
 import threading
 import logging
-import time
 
 from functools import partial
 from inference.core.interfaces.camera.entities import VideoFrame
 from flask import Flask, render_template, request
 from computer_vision import infer
 from flask_socketio import SocketIO
+from flask_cors import CORS
 from game import run_game, account_player_action
 from db import db
 
 app = Flask(__name__)
-socket = SocketIO(app)
+CORS(app)
+socket = SocketIO(app, cors_allowed_origins="*")
 
 label_annotator = supervision.LabelAnnotator()
 box_annotator = supervision.BoundingBoxAnnotator()
+
+logger = logging.getLogger(__name__)
 
 db().save("is_playing", False)
 
 
 @app.route("/play", methods=["POST"])
 def play():
-
     room_key = request.form.get("room_key")
 
     db().save("is_playing", True)
     run_game(socket, room_key)
     db().save("is_playing", False)
 
-    return "Ok"
+    return {"message": "Game started"}
 
 
 @app.route("/")
@@ -60,7 +62,7 @@ def room(room_key):
 async def async_inference(room_key, player_name):
     await asyncio.to_thread(
         infer,
-        "rock-paper-scissors-sxsw/14",
+        "rock-paper-scissors-sxsw/11",
         0,
         on_prediction=partial(
             process_predictions, room_key=room_key, player_name=player_name
@@ -78,10 +80,8 @@ def publish_buffered_frame_to_socket(room_key, player_name, frame):
     _, buffer = cv2.imencode(".jpg", frame)
     frame = buffer.tobytes()
 
-    socket.emit(
-        "update-frame",
-        {"room_key": room_key, "player_name": player_name, "frame": frame},
-    )
+    socket.emit("debug", "emitting frame")
+    socket.emit("frame", frame)
 
 
 def annotated_frame(predictions: dict, video_frame: VideoFrame):
@@ -115,4 +115,4 @@ def process_predictions(
 
 
 if __name__ == "__main__":
-    socket.run(app, debug=True, host="0.0.0.0", port=10000)
+    socket.run(app, debug=True, host="0.0.0.0", port=8080)

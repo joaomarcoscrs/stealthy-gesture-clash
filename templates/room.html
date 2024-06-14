@@ -1,5 +1,5 @@
-{% extends "base.html" %} {% block title %}{{ room_key }}{% endblock %} {% block
-content %}
+{% extends "base.html" %} {% block title %}stealthy gesture clash: {{ room_key
+}}{% endblock %} {% block content %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <div class="flex items-center justify-center flex-col">
@@ -15,6 +15,10 @@ content %}
 
   <div id="video-container" class="text-center my-3">
     <img id="video" />
+  </div>
+
+  <div id="counter my-3 font-thin text-xl">
+    <!-- Content will be dynamically updated here -->
   </div>
 
   <button

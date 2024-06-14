@@ -30,7 +30,10 @@ def run_game(socket, room_key):
 
 
 def get_action_from_predictions(predictions):
-    return "rock"
+    class_translation_map = {"Paper": "paper", "Rock": "rock", "Scissors": "scissors"}
+
+    if predictions:
+        return class_translation_map[predictions[0]["class"]]
 
 
 def decide_result(player_action, bot_action):
@@ -46,22 +49,24 @@ def decide_result(player_action, bot_action):
 
 def process_result(room_key, socket, player_action):
     oponent_action = bot_action()
-    result = decide_result(player_action, oponent_action)
 
-    if player_action and result:
-        socket.emit(
-            "result",
-            {
-                "room_key": room_key,
-                "result": result,
-                "player_action": player_action,
-                "bot_action": oponent_action,
-            },
-        )
+    if player_action:
+        result = decide_result(player_action, oponent_action)
+
+        if result:
+            socket.emit(
+                "result",
+                {
+                    "room_key": room_key,
+                    "result": result,
+                    "player_action": player_action,
+                    "bot_action": oponent_action,
+                },
+            )
 
 
 def account_player_action(socket, room_key, player_name, predictions):
-    action = get_action_from_predictions(predictions)
+    action = get_action_from_predictions(predictions["predictions"])
 
     socket.emit(
         "player-action",
