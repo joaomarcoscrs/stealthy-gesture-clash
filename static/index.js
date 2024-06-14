@@ -2,25 +2,34 @@ import { notSoRandomAdjective, notSoRandomNouns } from "./not-so-random.js";
 import { startSocket } from "./socket.js";
 
 document.addEventListener("DOMContentLoaded", function () {
-  startSocket();
-  handleInputs();
+  const socket = startSocket();
+  handleInputs(socket);
 });
 
 
-function createRoom(roomKey) {
+function createRoom(socket, roomKey) {
   const name = 'host-racoon'
 
   window.location.href = `/room/${roomKey}?name=${name}`;
+
+  socket.emit("created-room", { name, roomKey });
+  socket.on("joined-room", (data) => {
+    if (data.roomKey === roomKey) {
+      alert(`${data.name} joined the room!`);
+    }
+  });
 };
 
-function joinRoom(name, roomKey) {
+function joinRoom(socket, name, roomKey) {
   window.location.href = `/room/${roomKey}?name=${name}`;
+  socket.emit("joined-room", { name, roomKey });
 }
 
-function handleInputs() {
+function handleInputs(socket) {
   const nameInput = document.getElementById("name");
   const roomKeyInput = document.getElementById("roomKey");
   const playButton = document.getElementById("playButton");
+  const createRoomButton = document.getElementById("createRoomButton");
   const gameForm = document.getElementById("gameForm");
 
   // Enable the play button if both inputs are filled
@@ -29,29 +38,35 @@ function handleInputs() {
   };
 
   // Event listeners for input changes
-  nameInput.addEventListener("input", checkInputs);
-  roomKeyInput.addEventListener("input", checkInputs);
+  nameInput?.addEventListener("input", checkInputs);
+  roomKeyInput?.addEventListener("input", checkInputs);
 
   const adjective = notSoRandomAdjective();
 
   // Creates good placeholders
-  nameInput.placeholder = `${adjective} raccoon`;
-  roomKeyInput.placeholder = `${adjective}-raccoon-and-friend`;
+  if (nameInput) {
+    nameInput.placeholder = `${adjective} raccoon`;
+  }
+
+  if (roomKeyInput) {
+    roomKeyInput.placeholder = `${adjective}-raccoon-and-friend`;
+  }
 
   // Form submission handler
-  gameForm.addEventListener("submit", function (event) {
+  gameForm?.addEventListener("submit", function (event) {
     event.preventDefault();
 
     // Perform any additional form handling here
 
     // For demonstration purposes, alert the form data
-    joinRoom(nameInput.value, roomKeyInput.value);
+    joinRoom(socket, nameInput.value, roomKeyInput.value);
   });
 
   // Button click handler for "Create a Room"
-  document.getElementById("createRoomButton").addEventListener("click", function () {
+  createRoomButton?.addEventListener("click", function () {
+    console.log('create room')
     const roomKey = `${notSoRandomAdjective()}-${notSoRandomNouns()}`;
     // Perform any action for creating a room here
-    createRoom(roomKey);
+    createRoom(socket, roomKey);
   });
 }

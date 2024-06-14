@@ -1,6 +1,7 @@
 export function startSocket() {
   console.log("Opening SocketIO connection");
   var socket = io.connect("http://127.0.0.1:5000");
+  var videoContainer = document.getElementById("video-container");
   var video = document.getElementById("video");
 
   socket.on("connect", function () {
@@ -12,7 +13,8 @@ export function startSocket() {
   });
 
   socket.on("update-frame", function (data) {
-    console.log("Received frame from SocketIO");
+    if (videoContainer) videoContainer.style.display = "block";
+
     var blob = new Blob([data], { type: "image/jpeg" });
     var url = URL.createObjectURL(blob);
     video.src = url;
@@ -24,4 +26,6 @@ export function startSocket() {
   socket.on("disconnect", function () {
     console.log("SocketIO connection closed");
   });
+
+  return socket;
 };
