@@ -4,6 +4,38 @@ document.addEventListener("DOMContentLoaded", function () {
   handlePlaceholders();
 });
 
+function notSoRandomNouns() {
+  const nouns = [
+    "people",
+    "friends",
+    "buddies",
+    "pals",
+    "fellows",
+    "chums",
+    "mates",
+    "companions",
+    "associates",
+    "partners",
+    "allies",
+    "confidants",
+    "acquaintances",
+    "colleagues",
+    "neighbors",
+    "roommates",
+    "classmates",
+    "teammates",
+    "cohorts",
+    "collaborators",
+    "conspirators",
+    "co-workers",
+    "co-pilots",
+    "sheriffs",
+    "shenanigators",
+  ];
+
+  return nouns[Math.floor(Math.random() * nouns.length)];
+}
+
 function notSoRandomAdjective() {
   const adjectives = [
     "amazing",
@@ -45,6 +77,17 @@ function notSoRandomAdjective() {
   return adjectives[Math.floor(Math.random() * adjectives.length)];
 }
 
+function createRoom(roomKey) {
+  const name = 'host-racoon'
+  // pushes to the room page
+  window.location.href = `/room/${roomKey}?name=${name}`;
+};
+
+function joinRoom(name, roomKey) {
+  window.location.href = `/room/${roomKey}?name=${name}`;
+  alert("Join a room functionality will be implemented here.");
+}
+
 function handleInputs() {
   const nameInput = document.getElementById("name");
   const roomKeyInput = document.getElementById("roomKey");
@@ -73,13 +116,14 @@ function handleInputs() {
     // Perform any additional form handling here
 
     // For demonstration purposes, alert the form data
-    alert(`Name: ${nameInput.value}\nRoom Key: ${roomKeyInput.value}`);
+    joinRoom(nameInput.value, roomKeyInput.value);
   });
 
   // Button click handler for "Create a Room"
   document.getElementById("createRoomButton").addEventListener("click", function () {
+    const roomKey = `${notSoRandomAdjective()}-${notSoRandomNouns()}`;
     // Perform any action for creating a room here
-    alert("Create a room functionality will be implemented here.");
+    createRoom(roomKey);
   });
 }
 
