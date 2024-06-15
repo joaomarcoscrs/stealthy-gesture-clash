@@ -111,7 +111,7 @@ function appendResult(result) {
 
 
 export function startSocket(result) {
-  var socket = io.connect("http://192.168.18.15:8080");
+  var socket = io.connect("http://localhost:8080");
   var videoContainer = document.getElementById("video-container");
   var video = document.getElementById("video");
 

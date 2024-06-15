@@ -28,3 +28,5 @@ pip install -r requirements.txt
 
 python app.py
 ```
+
+It will start your game at http://localhost:8080
