@@ -2,10 +2,10 @@ import json
 
 
 def db():
-    return MyDatabase("db.json")
+    return JsonDatabase("db.json")
 
 
-class MyDatabase:
+class JsonDatabase:
     def __init__(self, json_file):
         self.json_file = json_file
         try:
