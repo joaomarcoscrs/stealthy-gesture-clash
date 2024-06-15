@@ -19,7 +19,7 @@ Whenever a new prediction comes from the pipeline, the server sends the frame an
 
 ## loom video 📹
 
-[![Demo Video](https://www.loom.com/share/d5ab2af3cc15444a99ee06ebcfaf9ae2?sid=478a2b60-f0ad-4768-b259-ec3fb4f7fb30)
+![Demo Video](https://www.loom.com/share/d5ab2af3cc15444a99ee06ebcfaf9ae2?sid=478a2b60-f0ad-4768-b259-ec3fb4f7fb30)
 
 ## run 🧑‍💻
 
