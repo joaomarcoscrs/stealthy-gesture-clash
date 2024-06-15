@@ -17,9 +17,9 @@ The server runs an [inference](https://github.com/roboflow/inference) pipeline t
 
 Whenever a new prediction comes from the pipeline, the server sends the frame and the game result to the client using SocketIO, and the client updates the video stream and the reuslt chart.
 
-## loom video 📹
+## demo video 📹
 
-[Demo Video](https://www.loom.com/share/d5ab2af3cc15444a99ee06ebcfaf9ae2?sid=478a2b60-f0ad-4768-b259-ec3fb4f7fb30)
+[Demo video on Loom](https://www.loom.com/share/d5ab2af3cc15444a99ee06ebcfaf9ae2?sid=478a2b60-f0ad-4768-b259-ec3fb4f7fb30)
 
 ## run 🧑‍💻
 
